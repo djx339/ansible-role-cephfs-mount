@@ -1,0 +1,46 @@
+---
+- name: user secret is required
+  fail:
+    msg: "cephfs_secret is required"
+  when: cephfs_secret is not defined or cephfs_secret|length == 0
+
+- name: create ceph folder
+  file:
+    dest: /etc/ceph
+    state: directory
+
+- name: create secret file
+  copy:
+    dest: "/etc/ceph/{{ cephfs_secret_file_prefix }}.{{ cephfs_user }}.secret"
+    content: "{{ cephfs_secret }}"
+    mode: 0600
+
+- name: create mountpoint
+  file:
+    dest: "{{ cephfs_mountpoint }}"
+    state: directory
+
+- name: install ceph client
+  apt: "name={{ item }}"
+  with_items:
+    - ceph-fs-common
+    - ceph-fuse
+    - nfs-common
+
+- name: check if the cephfs is already mounted
+  shell: "mount | grep -q {{ cephfs_mountpoint }}"
+  register: _mount
+  ignore_errors: yes
+
+- name: mount cephfs by kernel
+  shell: "mount.ceph {{ cephfs_endpoint }} {{ cephfs_mountpoint }} -o name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_secret_file_prefix }}.{{ cephfs_user }}.secret"
+  when:
+    - _mount.rc == 1
+    - ansible_kernel | match('^4.*')
+  
+- name: add cephfs mount options to fstab
+  lineinfile:
+    dest: /etc/fstab
+      regexp: "^{{ cephfs_endpoint }}"
+      line: "{{ cephfs_endpoint }} {{ cephfs_mountpoint }} ceph name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_secret_file_prefix }}.{{ cephfs_user }}.secret,noatime,_netdev,defaults 0 2"
+    when: ansible_kernel | match('^4.*')
