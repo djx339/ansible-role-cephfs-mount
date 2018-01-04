@@ -19,7 +19,7 @@ Role Variables
 
 `cephfs_secret`: The secret of `cephfs_user`. (Default: `oj32j90ajsf90jjsdffd==`)
 
-`cephfs_secret_file_prefix`: The prefix of cecret file. (Default: `localhost.`)
+`cephfs_secret_file_prefix`: The prefix of cecret file. (Default: `localhost`)
 
 Dependencies
 ------------
@@ -37,7 +37,7 @@ Example Playbook
     cephfs_mountpoint: /mnt/cephfs
     cephfs_user: admin
     cephfs_secret: o9238jf9ajsdfje3jf9je==
-    cephfs_secret_file_prefix: ceph.example.com.
+    cephfs_secret_file_prefix: ceph.example.com
   roles:
     - { role: djx339.cephfs-mount }
 ```

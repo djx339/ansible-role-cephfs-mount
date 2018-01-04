@@ -3,4 +3,4 @@ cephfs_endpoint: localhost:6789:/
 cephfs_mountpoint: /cephfs
 cephfs_user: admin
 cephfs_secret: oj32j90ajsf90jjsdffd==
-cephfs_secret_file_prefix: localhost.
+cephfs_secret_file_prefix: localhost
