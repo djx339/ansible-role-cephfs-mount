@@ -43,4 +43,4 @@
     dest: /etc/fstab
     regexp: "^{{ cephfs_endpoint }}"
     line: "{{ cephfs_endpoint }} {{ cephfs_mountpoint }} ceph name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_secret_file_prefix }}.{{ cephfs_user }}.secret,noatime,_netdev,defaults 0 2"
-    when: ansible_kernel | match('^4.*')
+  when: ansible_kernel | match('^4.*')
